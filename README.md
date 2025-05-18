@@ -50,7 +50,7 @@ Welcome! This repository contains a curated collection of my academic and indepe
 - Built an interactive Streamlit interface and used the TMDb API to display movie posters dynamically.
 - Engineered with modular design in PyCharm and deployed as a local app.
 
-[🔗 View Project](./Movie-Recommender-System)
+[🔗 View Project](./Movie-Recommender- System)
 
 ---
 
