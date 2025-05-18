@@ -14,7 +14,7 @@ Welcome! This repository contains a curated collection of my academic and indepe
 - Designed robust data augmentation and performed class-wise performance analysis.
 - Findings documented and presented in a research paper.
 
-[🔗 View Project](./Tomato-Leaf-Disease-Classification)
+[Project](./Tomato-Leaf-Disease-Classification)
 
 ---
 
@@ -23,7 +23,7 @@ Welcome! This repository contains a curated collection of my academic and indepe
 - Integrated AI-powered ingredient substitutions and calorie tracking for gym-focused users.
 - Fine-tuned a Large Language Model (LLM) to generate context-specific cooking suggestions.
 
-[🔗 View Project](./CulinaryCloud_RecipeSharingPlatform)
+[Project](./CulinaryCloud_RecipeSharingPlatform)
 
 ---
 
@@ -32,7 +32,7 @@ Welcome! This repository contains a curated collection of my academic and indepe
 - Trained multiple ML models (Naive Bayes, Logistic Regression, Neural Network) to classify articles by genre.
 - Ranked among the top 3 models in class based on accuracy and presented findings in a paper.
 
-[🔗 View Project](./Urdu-News-Classification)
+[Project](./Urdu-News-Classification)
 
 ---
 
@@ -41,7 +41,7 @@ Welcome! This repository contains a curated collection of my academic and indepe
 - Performed statistical tests (correlation, p-values) and visualized behavioral insights.
 - Published findings in a Medium article aimed at public engagement and policy relevance.
 
-[🔗 View Project](./Screen-Time-Analysis)
+[Project](./Screen-Time-Analysis)
 
 ---
 
@@ -50,7 +50,8 @@ Welcome! This repository contains a curated collection of my academic and indepe
 - Built an interactive Streamlit interface and used the TMDb API to display movie posters dynamically.
 - Engineered with modular design in PyCharm and deployed as a local app.
 
-[🔗 View Project](./Movie-Recommender- System)
+[Project](./Movie-Recommender-%20System)
+
 
 ---
 
