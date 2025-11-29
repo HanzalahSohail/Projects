@@ -1,3 +1,4 @@
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
@@ -205,3 +206,6 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+=======
+*/similarity.pkl
+>>>>>>> b5c3f7e4d42c52abf3cf0a45d775f22d9c89e8fd
