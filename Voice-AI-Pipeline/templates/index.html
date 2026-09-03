@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Voice AI Pipeline + Tools</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a0f;--surface:#12121a;--surface2:#1a1a26;--border:#2a2a3a;--text:#e4e4ef;--text-dim:#7a7a8e;--accent:#6c5ce7;--accent2:#a29bfe;--green:#00e676;--orange:#ffab40;--red:#ff5252;--cyan:#00e5ff}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh}
+.app{max-width:1200px;margin:0 auto;padding:20px}
+.header{display:flex;align-items:center;justify-content:space-between;padding:12px 0 20px;border-bottom:1px solid var(--border);margin-bottom:20px}
+.header h1{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;background:linear-gradient(135deg,var(--accent2),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.header .status{display:flex;align-items:center;gap:8px;font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--text-dim)}
+.status-dot{width:8px;height:8px;border-radius:50%;background:var(--red);transition:background 0.3s}
+.status-dot.ok{background:var(--green)}
+.pipeline-flow{display:flex;align-items:center;justify-content:center;gap:4px;padding:14px;background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:20px;overflow-x:auto}
+.pipeline-node{padding:8px 12px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;border:1px solid var(--border);background:var(--surface2);color:var(--text-dim);transition:all 0.3s;white-space:nowrap}
+.pipeline-node.active{border-color:var(--accent);color:var(--accent2);background:rgba(108,92,231,0.1);box-shadow:0 0 15px rgba(108,92,231,0.15)}
+.pipeline-node.tool-active{border-color:var(--orange);color:var(--orange);background:rgba(255,171,64,0.1);box-shadow:0 0 15px rgba(255,171,64,0.15)}
+.pipeline-arrow{color:var(--border);font-size:14px;flex-shrink:0}
+.pipeline-arrow.active{color:var(--accent)}
+.main-grid{display:grid;grid-template-columns:1fr 300px;gap:16px}
+@media(max-width:800px){.main-grid{grid-template-columns:1fr}}
+.chat-panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;display:flex;flex-direction:column;height:500px}
+.chat-messages{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px}
+.chat-messages::-webkit-scrollbar{width:4px}
+.chat-messages::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+.msg{max-width:82%;padding:9px 13px;border-radius:10px;font-size:13px;line-height:1.5;animation:fadeIn 0.3s}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.msg.user{align-self:flex-end;background:var(--accent);color:white;border-bottom-right-radius:3px}
+.msg.assistant{align-self:flex-start;background:var(--surface2);border:1px solid var(--border);border-bottom-left-radius:3px}
+.msg.system{align-self:center;background:transparent;color:var(--text-dim);font-size:11px;font-family:'JetBrains Mono',monospace;padding:3px 10px}
+.msg.tool{align-self:center;background:rgba(255,171,64,0.1);border:1px solid rgba(255,171,64,0.3);color:var(--orange);font-size:11px;font-family:'JetBrains Mono',monospace;padding:6px 12px;border-radius:20px}
+.input-area{padding:10px 14px;border-top:1px solid var(--border);display:flex;gap:8px;align-items:center}
+.input-area input{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-size:13px;font-family:'DM Sans',sans-serif;outline:none}
+.input-area input:focus{border-color:var(--accent)}
+.btn{padding:9px 14px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:12px;font-weight:600;cursor:pointer;transition:all 0.2s;font-family:'DM Sans',sans-serif;white-space:nowrap}
+.btn:hover{border-color:var(--accent);background:rgba(108,92,231,0.1)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:white}
+.btn.recording{background:var(--red);border-color:var(--red);color:white;animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(255,82,82,0.4)}50%{box-shadow:0 0 0 8px rgba(255,82,82,0)}}
+.side-panel{display:flex;flex-direction:column;gap:14px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px}
+.card h3{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--text-dim);margin-bottom:10px}
+.tool-list{display:flex;flex-wrap:wrap;gap:6px}
+.tool-chip{padding:4px 10px;border-radius:12px;font-family:'JetBrains Mono',monospace;font-size:10px;border:1px solid var(--border);color:var(--text-dim);background:var(--surface2)}
+.tool-chip.active{border-color:var(--orange);color:var(--orange);background:rgba(255,171,64,0.1)}
+.latency-total{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700;background:linear-gradient(135deg,var(--accent2),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-align:center;padding:4px 0}
+.latency-total-label{text-align:center;font-size:10px;color:var(--text-dim);font-family:'JetBrains Mono',monospace}
+.latency-item{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;font-size:11px}
+.latency-label{font-family:'JetBrains Mono',monospace;color:var(--text-dim);font-size:10px}
+.latency-value{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:12px}
+.latency-bar-wrap{flex:1;margin:0 8px;height:3px;background:var(--surface2);border-radius:2px;overflow:hidden}
+.latency-bar{height:100%;border-radius:2px;transition:width 0.5s;background:var(--accent)}
+.voice-select{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:7px 10px;color:var(--text);font-size:12px;font-family:'JetBrains Mono',monospace;outline:none;cursor:pointer}
+.transcript-log{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-dim);max-height:100px;overflow-y:auto;line-height:1.5}
+.transcript-log .log-entry{padding:2px 0;border-bottom:1px solid rgba(255,255,255,0.03)}
+.tag{font-weight:600;margin-right:4px}
+.tag.stt{color:var(--cyan)}.tag.llm{color:var(--accent2)}.tag.tts{color:var(--orange)}.tag.sys{color:var(--text-dim)}.tag.tool{color:var(--green)}
+.controls-row{display:flex;gap:6px}.controls-row .btn{flex:1;font-size:11px;padding:7px}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <h1>▌Voice AI + Tools</h1>
+    <div class="status"><div class="status-dot" id="statusDot"></div><span id="statusText">checking...</span></div>
+  </div>
+
+  <div class="pipeline-flow">
+    <div class="pipeline-node" id="node-mic">🎙 MIC</div>
+    <div class="pipeline-arrow">→</div>
+    <div class="pipeline-node" id="node-stt">⚡ STT</div>
+    <div class="pipeline-arrow">→</div>
+    <div class="pipeline-node" id="node-llm">🧠 LLM</div>
+    <div class="pipeline-arrow">→</div>
+    <div class="pipeline-node" id="node-tools">🔧 TOOLS</div>
+    <div class="pipeline-arrow">→</div>
+    <div class="pipeline-node" id="node-tts">🔊 TTS</div>
+    <div class="pipeline-arrow">→</div>
+    <div class="pipeline-node" id="node-speaker">🔈 SPEAKER</div>
+  </div>
+
+  <div class="main-grid">
+    <div class="chat-panel">
+      <div class="chat-messages" id="chatMessages">
+        <div class="msg system">Ready — try: "Send an SMS to +1234567890 saying hello" or "Book a meeting for tomorrow"</div>
+      </div>
+      <div class="input-area">
+        <input type="text" id="textInput" placeholder='Try: "Check availability for tomorrow"' />
+        <button class="btn primary" onclick="sendText()">Send</button>
+        <button class="btn" id="micBtn" onclick="toggleMic()">🎙 Mic</button>
+      </div>
+    </div>
+
+    <div class="side-panel">
+      <div class="card">
+        <h3>🔧 Tools</h3>
+        <div class="tool-list" id="toolList"></div>
+      </div>
+
+      <div class="card">
+        <h3>⏱ Latency</h3>
+        <div class="latency-total" id="totalLatency">—</div>
+        <div class="latency-total-label">total response (ms)</div>
+        <div style="margin-top:10px">
+          <div class="latency-item"><span class="latency-label">LLM</span><div class="latency-bar-wrap"><div class="latency-bar" id="bar-llm" style="width:0"></div></div><span class="latency-value" id="val-llm">—</span></div>
+          <div class="latency-item"><span class="latency-label">Tools</span><div class="latency-bar-wrap"><div class="latency-bar" id="bar-tool" style="width:0;background:var(--orange)"></div></div><span class="latency-value" id="val-tool">—</span></div>
+          <div class="latency-item"><span class="latency-label">TTS</span><div class="latency-bar-wrap"><div class="latency-bar" id="bar-tts" style="width:0;background:var(--cyan)"></div></div><span class="latency-value" id="val-tts">—</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>⚙ Settings</h3>
+        <select class="voice-select" id="voiceSelect">
+          <option value="aura-asteria-en">Asteria (F)</option>
+          <option value="aura-orion-en">Orion (M)</option>
+          <option value="aura-luna-en">Luna (F)</option>
+          <option value="aura-zeus-en">Zeus (M)</option>
+        </select>
+        <div class="controls-row" style="margin-top:10px">
+          <button class="btn" onclick="clearChat()">Clear</button>
+          <button class="btn" onclick="checkHealth()">Test</button>
+          <button class="btn" onclick="viewData()">CRM</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>📋 Log</h3>
+        <div class="transcript-log" id="logPanel"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let isRecording=false,audioContext=null,ws=null,audioQueue=[],isPlaying=false,playbackCtx=null;
+const sessionId='s-'+Math.random().toString(36).substr(2,9);
+const chatMessages=document.getElementById('chatMessages'),textInput=document.getElementById('textInput'),micBtn=document.getElementById('micBtn'),logPanel=document.getElementById('logPanel');
+
+function addMessage(t,r){const d=document.createElement('div');d.className=`msg ${r}`;d.textContent=t;chatMessages.appendChild(d);chatMessages.scrollTop=chatMessages.scrollHeight}
+function log(tag,t){const e=document.createElement('div');e.className='log-entry';e.innerHTML=`<span class="tag ${tag}">[${tag.toUpperCase()}]</span>${t}`;logPanel.appendChild(e);logPanel.scrollTop=logPanel.scrollHeight}
+function activate(ids){document.querySelectorAll('.pipeline-node').forEach(e=>e.classList.remove('active','tool-active'));ids.forEach(id=>{const e=document.getElementById(id);if(e){if(id==='node-tools')e.classList.add('tool-active');else e.classList.add('active')}})}
+function clearPipeline(){document.querySelectorAll('.pipeline-node').forEach(e=>e.classList.remove('active','tool-active'))}
+
+function updateLatency(m){
+  document.getElementById('totalLatency').textContent=m.total_voice_response_ms?`${m.total_voice_response_ms}`:'—';
+  const mx=5000;
+  [['bar-llm','val-llm',m.llm_first_token_ms],['bar-tool','val-tool',m.tool_execution_ms],['bar-tts','val-tts',m.tts_first_chunk_ms]].forEach(([b,v,ms])=>{
+    document.getElementById(v).textContent=ms?`${ms}ms`:'—';
+    document.getElementById(b).style.width=ms?`${Math.min(100,(ms/mx)*100)}%`:'0';
+  });
+}
+
+function highlightTool(name){
+  document.querySelectorAll('.tool-chip').forEach(c=>{c.classList.toggle('active',c.textContent===name)});
+  setTimeout(()=>document.querySelectorAll('.tool-chip').forEach(c=>c.classList.remove('active')),3000);
+}
+
+function ensureCtx(){if(!playbackCtx||playbackCtx.state==='closed')playbackCtx=new(window.AudioContext||window.webkitAudioContext)();if(playbackCtx.state==='suspended')playbackCtx.resume();return playbackCtx}
+function queueAudio(buf){audioQueue.push(buf);if(!isPlaying)playNext()}
+function playNext(){if(!audioQueue.length){isPlaying=false;clearPipeline();return}isPlaying=true;const buf=audioQueue.shift();activate(['node-speaker']);const ctx=ensureCtx(),s=new Int16Array(buf),f=new Float32Array(s.length);for(let i=0;i<s.length;i++)f[i]=s[i]/32768;const ab=ctx.createBuffer(1,f.length,16000);ab.getChannelData(0).set(f);const src=ctx.createBufferSource();src.buffer=ab;src.connect(ctx.destination);src.onended=()=>playNext();src.start()}
+
+async function sendText(){
+  const t=textInput.value.trim();if(!t)return;textInput.value='';addMessage(t,'user');activate(['node-llm']);ensureCtx();
+  try{
+    const res=await fetch('/api/text',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:t,session_id:sessionId,voice:document.getElementById('voiceSelect').value})});
+    const d=await res.json();if(d.error){addMessage(`Error: ${d.error}`,'system');clearPipeline();return}
+    if(d.latency)updateLatency(d.latency);
+    if(d.audio_base64){activate(['node-tts','node-speaker']);const r=atob(d.audio_base64),b=new Uint8Array(r.length);for(let i=0;i<r.length;i++)b[i]=r.charCodeAt(i);queueAudio(b.buffer)}
+  }catch(e){addMessage(`Error: ${e.message}`,'system');clearPipeline()}
+}
+textInput.addEventListener('keydown',e=>{if(e.key==='Enter')sendText()});
+
+function toggleMic(){isRecording?stopRecording():startRecording()}
+
+async function startRecording(){
+  ensureCtx();
+  try{
+    const stream=await navigator.mediaDevices.getUserMedia({audio:{channelCount:1,sampleRate:16000,echoCancellation:true,noiseSuppression:true}});
+    audioContext=new(window.AudioContext||window.webkitAudioContext)({sampleRate:16000});
+    const src=audioContext.createMediaStreamSource(stream),proc=audioContext.createScriptProcessor(4096,1,1);
+    ws=new WebSocket(`ws://${location.host}/ws/audio`);
+    ws.onopen=()=>{isRecording=true;micBtn.textContent='⏹ Stop';micBtn.classList.add('recording');activate(['node-mic','node-stt']);log('sys','Connected')};
+    ws.onmessage=ev=>{
+      if(typeof ev.data==='string'){
+        const m=JSON.parse(ev.data);
+        if(m.type==='partial')log('stt',`${m.text}`);
+        else if(m.type==='transcript'){audioQueue=[];isPlaying=false;addMessage(m.text,'user');log('stt',`Final: ${m.text}`);activate(['node-llm'])}
+        else if(m.type==='tool_status'){addMessage(`🔧 ${m.text}`,'tool');log('tool',m.text);activate(['node-tools']);const n=m.text.split('...')[0]?.replace('Calling ','');if(n)highlightTool(n)}
+        else if(m.type==='response'){addMessage(m.text,'assistant');log('llm',m.text.substring(0,60))}
+        else if(m.type==='tts_done'){log('tts','Audio ready')}
+        else if(m.type==='latency'){updateLatency(m.metrics);log('sys',`Total: ${m.metrics.total_voice_response_ms||'?'}ms`)}
+        else if(m.type==='error'){addMessage(`Error: ${m.message}`,'system')}
+      }else{
+        activate(['node-tts','node-speaker']);
+        ev.data.arrayBuffer().then(buf=>{log('tts',`${buf.byteLength} bytes`);queueAudio(buf)});
+      }
+    };
+    ws.onclose=()=>{log('sys','Disconnected');stopRecording()};
+    ws.onerror=()=>{addMessage('WebSocket failed','system')};
+    proc.onaudioprocess=e=>{if(ws&&ws.readyState===1){const f=e.inputBuffer.getChannelData(0),i=new Int16Array(f.length);for(let j=0;j<f.length;j++){const s=Math.max(-1,Math.min(1,f[j]));i[j]=s<0?s*0x8000:s*0x7FFF}ws.send(i.buffer)}};
+    src.connect(proc);proc.connect(audioContext.destination);
+    micBtn._stream=stream;micBtn._proc=proc;micBtn._src=src;
+  }catch(e){addMessage(`Mic error: ${e.message}`,'system')}
+}
+
+function stopRecording(){
+  isRecording=false;micBtn.textContent='🎙 Mic';micBtn.classList.remove('recording');
+  if(ws){ws.send(JSON.stringify({type:'stop'}));ws.close();ws=null}
+  if(micBtn._stream)micBtn._stream.getTracks().forEach(t=>t.stop());
+  if(micBtn._proc)micBtn._proc.disconnect();if(micBtn._src)micBtn._src.disconnect();
+  if(audioContext){audioContext.close();audioContext=null}
+}
+
+function clearChat(){chatMessages.innerHTML='<div class="msg system">Cleared</div>';logPanel.innerHTML='';audioQueue=[];isPlaying=false;clearPipeline();document.getElementById('totalLatency').textContent='—'}
+
+async function viewData(){
+  try{
+    const[leads,logs]=await Promise.all([fetch('/api/leads').then(r=>r.json()),fetch('/api/call-logs').then(r=>r.json())]);
+    let msg=`Leads: ${leads.length}`;if(leads.length)msg+=` (latest: ${leads[leads.length-1].name})`;
+    msg+=` | Call logs: ${logs.length}`;
+    addMessage(msg,'system');
+  }catch(e){addMessage('Could not fetch CRM data','system')}
+}
+
+async function checkHealth(){
+  try{
+    const d=await(await fetch('/api/health')).json();
+    const dot=document.getElementById('statusDot'),txt=document.getElementById('statusText');
+    if(d.deepgram_configured&&d.azure_openai_configured){dot.classList.add('ok');txt.textContent=`ok · ${d.tool_count} tools`;addMessage(`Ready! ${d.tool_count} tools: ${d.tools_registered.join(', ')}`,'system');
+      const tl=document.getElementById('toolList');tl.innerHTML='';d.tools_registered.forEach(n=>{const c=document.createElement('span');c.className='tool-chip';c.textContent=n;tl.appendChild(c)});
+    }else{dot.classList.remove('ok');txt.textContent='missing APIs';addMessage('Missing API keys','system')}
+  }catch(e){document.getElementById('statusDot').classList.remove('ok');document.getElementById('statusText').textContent='offline'}
+}
+checkHealth();
+</script>
+</body>
+</html>

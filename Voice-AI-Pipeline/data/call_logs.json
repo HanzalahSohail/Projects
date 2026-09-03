@@ -1,0 +1,110 @@
+[
+  {
+    "id": 1,
+    "caller_name": "Test User",
+    "summary": "Test call about product demo",
+    "duration_seconds": 120,
+    "outcome": "completed",
+    "follow_up": "Send pricing doc",
+    "logged_at": "2026-03-31T16:10:48.382021"
+  },
+  {
+    "id": 2,
+    "caller_name": "Test User",
+    "summary": "Test call about product demo",
+    "duration_seconds": 120,
+    "outcome": "completed",
+    "follow_up": "Send pricing doc",
+    "logged_at": "2026-03-31T16:24:45.156232"
+  },
+  {
+    "id": 3,
+    "caller_name": "Test User",
+    "summary": "Test call about product demo",
+    "duration_seconds": 120,
+    "outcome": "completed",
+    "follow_up": "Send pricing doc",
+    "logged_at": "2026-03-31T16:29:35.699598"
+  },
+  {
+    "id": 4,
+    "caller_name": "John Smith",
+    "summary": "Discussed pricing.",
+    "duration_seconds": 300,
+    "outcome": "completed",
+    "follow_up": "",
+    "logged_at": "2026-03-31T16:37:08.909976"
+  },
+  {
+    "id": 5,
+    "caller_name": "Ahmed Khan",
+    "summary": "Discussed pricing for five minutes.",
+    "duration_seconds": 300,
+    "outcome": "interested",
+    "follow_up": "",
+    "logged_at": "2026-03-31T18:08:31.998008"
+  },
+  {
+    "id": 6,
+    "caller_name": "Emma",
+    "summary": "He'll be late",
+    "duration_seconds": 60,
+    "outcome": "callback_requested",
+    "follow_up": "Follow-up needed",
+    "logged_at": "2026-03-31T22:27:36.905210"
+  },
+  {
+    "id": 7,
+    "caller_name": "John",
+    "summary": "He'll be late for the meeting.",
+    "duration_seconds": 120,
+    "outcome": "completed",
+    "follow_up": "He'll try to be early.",
+    "logged_at": "2026-04-01T01:04:43.632218"
+  },
+  {
+    "id": 8,
+    "caller_name": "Adam",
+    "summary": "He would be late for the meeting.",
+    "duration_seconds": 120,
+    "outcome": "completed",
+    "follow_up": "He may reschedule the meeting.",
+    "logged_at": "2026-04-01T01:09:39.405961"
+  },
+  {
+    "id": 9,
+    "caller_name": "John",
+    "summary": "He'll be late for the meeting, and we can then reschedule.",
+    "duration_seconds": 120,
+    "outcome": "completed",
+    "follow_up": "The meeting will be rescheduled.",
+    "logged_at": "2026-04-02T16:00:59.495624"
+  },
+  {
+    "id": 10,
+    "caller_name": "Peter",
+    "summary": "He'll be late for the meeting.",
+    "duration_seconds": 180,
+    "outcome": "callback_requested",
+    "follow_up": "Reschedule the meeting.",
+    "logged_at": "2026-04-02T17:00:22.200982"
+  },
+  {
+    "id": 11,
+    "caller_name": "Peter",
+    "summary": "Peter will be late for the meeting.",
+    "duration_seconds": 0,
+    "outcome": "completed",
+    "follow_up": "",
+    "logged_at": "2026-04-02T19:01:41.010190"
+  },
+  {
+    "id": 12,
+    "caller_name": "Adam",
+    "summary": "He'll be late",
+    "duration_seconds": 120,
+    "outcome": "completed",
+    "follow_up": "Reschedule the meeting.",
+    "logged_at": "2026-04-02T19:48:42.869742"
+  }
+]
