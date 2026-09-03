@@ -8,6 +8,20 @@ Welcome! This repository contains a curated collection of my academic and indepe
 
 ## 🔬 ACADEMIC PROJECTS
 
+### Voice AI Pipeline — Royal Cyber
+- Built a real-time voice agent (STT → LLM → TTS) reducing first-audio latency from  ~9s to ~2s by streaming GPT-4o-mini tokens over a persistent Deepgram WebSocket.
+- Architected an async tool-calling pipeline over Azure OpenAI for email, meeting booking/cancellation (Cal.com), and CRM lead management executable mid-conversation
+- Built a custom MCP server exposing Cal.com scheduling as agentic tools with input validation and timezone handling
+
+[Project](./Voice-AI-Pipeline)
+
+### MediQ — Multilingual RAG Medical Chatbot — Systems Limited
+- Built a RAG chatbot using Llama3-70b (Groq) and FAISS with sentence-transformers embeddings, achieving 92% accuracy on an internal 25-question benchmark
+- Reduced retrieval latency from 210ms to 120ms (43%) via FAISS vector search optimization
+- Implemented zero-shot intent classification (BART-large-MNLI) and domain restriction with multilingual support across English and Urdu
+
+[Project](./RAG_Pipeline)
+
 ###  Tomato Leaf Disease Classification
 - Developed a novel RGB + Lab color-space fusion model using EfficientNet-B0 and CBAM attention to classify tomato leaf diseases from real-world images (PlantDoc dataset).
 - Achieved 55.63% accuracy — a 22-point improvement over the baseline Inception model.
